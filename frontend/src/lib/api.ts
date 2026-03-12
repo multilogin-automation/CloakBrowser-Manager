@@ -49,6 +49,7 @@ export interface ProfileCreateData {
   geoip?: boolean;
   color_scheme?: string | null;
   notes?: string | null;
+  tags?: { tag: string; color: string | null }[];
 }
 
 export interface LaunchResult {

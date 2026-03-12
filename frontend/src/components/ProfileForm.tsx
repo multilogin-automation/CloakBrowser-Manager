@@ -1,4 +1,4 @@
-import { Save, Trash2 } from "lucide-react";
+import { Save, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Profile, ProfileCreateData } from "../lib/api";
 
@@ -8,6 +8,26 @@ interface ProfileFormProps {
   onDelete?: () => Promise<void>;
   onCancel: () => void;
 }
+
+const RESOLUTION_PRESETS: Record<string, { width: number; height: number }> = {
+  "1920 × 1080 (Full HD)": { width: 1920, height: 1080 },
+  "2560 × 1440 (QHD)": { width: 2560, height: 1440 },
+  "1366 × 768 (HD)": { width: 1366, height: 768 },
+  "1440 × 900": { width: 1440, height: 900 },
+  "1536 × 864": { width: 1536, height: 864 },
+  "1280 × 720 (720p)": { width: 1280, height: 720 },
+};
+
+const TAG_COLORS = [
+  "#6366f1", // indigo
+  "#22c55e", // green
+  "#f59e0b", // amber
+  "#ef4444", // red
+  "#06b6d4", // cyan
+  "#a855f7", // purple
+  "#f97316", // orange
+  "#ec4899", // pink
+];
 
 const GPU_PRESETS: Record<string, { vendor: string; renderer: string }> = {
   "NVIDIA RTX 3070": {
@@ -44,10 +64,13 @@ export function ProfileForm({ profile, onSave, onDelete, onCancel }: ProfileForm
     human_preset: "default",
     headless: false,
     geoip: false,
+    tags: [],
   });
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [tagInput, setTagInput] = useState("");
+  const [tagColor, setTagColor] = useState<string | null>("#6366f1");
 
   useEffect(() => {
     if (profile) {
@@ -70,6 +93,7 @@ export function ProfileForm({ profile, onSave, onDelete, onCancel }: ProfileForm
         geoip: profile.geoip,
         color_scheme: profile.color_scheme,
         notes: profile.notes,
+        tags: profile.tags ?? [],
       });
     }
   }, [profile]);
@@ -108,8 +132,28 @@ export function ProfileForm({ profile, onSave, onDelete, onCancel }: ProfileForm
     }
   };
 
+  const randomizeSeed = () => {
+    set("fingerprint_seed", Math.floor(Math.random() * 90000) + 10000);
+  };
+
+  const currentResolution = Object.entries(RESOLUTION_PRESETS).find(
+    ([, v]) => v.width === form.screen_width && v.height === form.screen_height,
+  )?.[0] ?? "custom";
+
+  const addTag = () => {
+    const tag = tagInput.trim();
+    if (!tag) return;
+    if (form.tags?.some((t) => t.tag === tag)) return;
+    set("tags", [...(form.tags ?? []), { tag, color: tagColor }]);
+    setTagInput("");
+  };
+
+  const removeTag = (tag: string) => {
+    set("tags", (form.tags ?? []).filter((t) => t.tag !== tag));
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="p-6 max-w-2xl">
+    <form onSubmit={handleSubmit} className="p-6 max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold">
@@ -167,13 +211,46 @@ export function ProfileForm({ profile, onSave, onDelete, onCancel }: ProfileForm
             </div>
             <div>
               <label className="label">Fingerprint Seed</label>
-              <input
-                className="input"
-                type="number"
-                value={form.fingerprint_seed ?? ""}
-                onChange={(e) => set("fingerprint_seed", e.target.value ? Number(e.target.value) : null)}
-                placeholder="Auto (random)"
-              />
+              <div className="flex gap-2">
+                <input
+                  className="input flex-1 no-spin"
+                  type="number"
+                  value={form.fingerprint_seed ?? ""}
+                  onChange={(e) => set("fingerprint_seed", e.target.value ? Number(e.target.value) : null)}
+                  placeholder="Auto (random)"
+                />
+                <button
+                  type="button"
+                  onClick={randomizeSeed}
+                  className="btn-secondary px-2.5"
+                  title="Randomize seed"
+                >
+                  <svg className="h-5 w-5" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round">
+                    {/* Right face - lightest */}
+                    <polygon points="28,10 16,16 16,28 28,22" fill="currentColor" opacity="0.06" />
+                    <polygon points="28,10 16,16 16,28 28,22" />
+                    {/* Left face - medium shade */}
+                    <polygon points="4,10 16,16 16,28 4,22" fill="currentColor" opacity="0.2" />
+                    <polygon points="4,10 16,16 16,28 4,22" />
+                    {/* Top face - brightest */}
+                    <polygon points="16,3 28,10 16,16 4,10" fill="currentColor" opacity="0.1" />
+                    <polygon points="16,3 28,10 16,16 4,10" />
+                    {/* Dots on top face (3 - diagonal) */}
+                    <circle cx="11.5" cy="8.5" r="1" fill="currentColor" opacity="0.7" />
+                    <circle cx="16" cy="9.5" r="1" fill="currentColor" opacity="0.7" />
+                    <circle cx="20.5" cy="10.5" r="1" fill="currentColor" opacity="0.7" />
+                    {/* Dots on left face (5 - dice pattern) */}
+                    <circle cx="7.5" cy="14" r="0.9" fill="currentColor" opacity="0.6" />
+                    <circle cx="12.5" cy="16.5" r="0.9" fill="currentColor" opacity="0.6" />
+                    <circle cx="10" cy="19" r="0.9" fill="currentColor" opacity="0.6" />
+                    <circle cx="7.5" cy="22" r="0.9" fill="currentColor" opacity="0.6" />
+                    <circle cx="12.5" cy="24.5" r="0.9" fill="currentColor" opacity="0.6" />
+                    {/* Dots on right face (2 - diagonal) */}
+                    <circle cx="20" cy="15" r="0.9" fill="currentColor" opacity="0.5" />
+                    <circle cx="24" cy="20" r="0.9" fill="currentColor" opacity="0.5" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -227,26 +304,47 @@ export function ProfileForm({ profile, onSave, onDelete, onCancel }: ProfileForm
         <section>
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Hardware</h3>
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="label">Screen Width</label>
-                <input
-                  className="input"
-                  type="number"
-                  value={form.screen_width ?? 1920}
-                  onChange={(e) => set("screen_width", Number(e.target.value))}
-                />
-              </div>
-              <div>
-                <label className="label">Screen Height</label>
-                <input
-                  className="input"
-                  type="number"
-                  value={form.screen_height ?? 1080}
-                  onChange={(e) => set("screen_height", Number(e.target.value))}
-                />
-              </div>
+            <div>
+              <label className="label">Screen Resolution</label>
+              <select
+                className="input"
+                value={currentResolution}
+                onChange={(e) => {
+                  const preset = RESOLUTION_PRESETS[e.target.value];
+                  if (preset) {
+                    set("screen_width", preset.width);
+                    set("screen_height", preset.height);
+                  }
+                }}
+              >
+                {Object.keys(RESOLUTION_PRESETS).map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+                <option value="custom">Custom</option>
+              </select>
             </div>
+            {currentResolution === "custom" && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label">Width</label>
+                  <input
+                    className="input"
+                    type="number"
+                    value={form.screen_width ?? 1920}
+                    onChange={(e) => set("screen_width", Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className="label">Height</label>
+                  <input
+                    className="input"
+                    type="number"
+                    value={form.screen_height ?? 1080}
+                    onChange={(e) => set("screen_height", Number(e.target.value))}
+                  />
+                </div>
+              </div>
+            )}
             <div>
               <label className="label">Hardware Concurrency</label>
               <input
@@ -341,6 +439,58 @@ export function ProfileForm({ profile, onSave, onDelete, onCancel }: ProfileForm
                 placeholder="Auto (from binary)"
               />
             </div>
+          </div>
+        </section>
+
+        {/* Tags */}
+        <section>
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Tags</h3>
+          {(form.tags ?? []).length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {(form.tags ?? []).map((t) => (
+                <span
+                  key={t.tag}
+                  className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-surface-3 text-gray-300"
+                  style={t.color ? { backgroundColor: `${t.color}20`, color: t.color } : undefined}
+                >
+                  {t.tag}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(t.tag)}
+                    className="hover:opacity-70"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="flex gap-2 items-center">
+            <div className="flex gap-1">
+              {TAG_COLORS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setTagColor(c)}
+                  className="w-4 h-4 rounded-full border-2 transition-transform"
+                  style={{
+                    backgroundColor: c,
+                    borderColor: tagColor === c ? "#fff" : "transparent",
+                    transform: tagColor === c ? "scale(1.2)" : undefined,
+                  }}
+                />
+              ))}
+            </div>
+            <input
+              className="input flex-1"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(); } }}
+              placeholder="Add tag..."
+            />
+            <button type="button" onClick={addTag} className="btn-secondary text-xs">
+              Add
+            </button>
           </div>
         </section>
 
