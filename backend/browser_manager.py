@@ -37,6 +37,21 @@ def _normalize_proxy(raw: str) -> str:
     return raw
 
 
+def _validate_proxy(url: str) -> None:
+    """Validate that a normalized proxy URL has scheme, host, and port."""
+    from urllib.parse import urlparse
+
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https", "socks5"):
+        raise ValueError(
+            f"Invalid proxy scheme '{parsed.scheme}'. Must be http, https, or socks5."
+        )
+    if not parsed.hostname:
+        raise ValueError(f"Proxy URL missing hostname: {url}")
+    if not parsed.port:
+        raise ValueError(f"Proxy URL missing port: {url}")
+
+
 def _init_profile_defaults(user_data_dir: Path) -> None:
     """Set up bookmarks and DuckDuckGo search on first launch."""
     default_dir = user_data_dir / "Default"
@@ -176,6 +191,8 @@ class BrowserManager:
             # Normalize proxy format (host:port:user:pass → http://user:pass@host:port)
             raw_proxy = profile.get("proxy") or None
             proxy = _normalize_proxy(raw_proxy) if raw_proxy else None
+            if proxy:
+                _validate_proxy(proxy)
 
             # Launch CloakBrowser on that display
             # DISPLAY is passed via env kwarg to avoid process-wide os.environ mutation

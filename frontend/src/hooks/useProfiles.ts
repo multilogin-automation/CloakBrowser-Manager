@@ -26,27 +26,39 @@ export function useProfiles() {
   }, [refresh]);
 
   const create = useCallback(
-    async (data: ProfileCreateData) => {
-      const profile = await api.createProfile(data);
-      setProfiles((prev) => [profile, ...prev]);
-      return profile;
+    async (data: ProfileCreateData): Promise<Profile | undefined> => {
+      try {
+        const profile = await api.createProfile(data);
+        setProfiles((prev) => [profile, ...prev]);
+        return profile;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to create profile");
+      }
     },
     [],
   );
 
   const update = useCallback(
     async (id: string, data: Partial<ProfileCreateData>) => {
-      const profile = await api.updateProfile(id, data);
-      setProfiles((prev) => prev.map((p) => (p.id === id ? profile : p)));
-      return profile;
+      try {
+        const profile = await api.updateProfile(id, data);
+        setProfiles((prev) => prev.map((p) => (p.id === id ? profile : p)));
+        return profile;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to update profile");
+      }
     },
     [],
   );
 
   const remove = useCallback(
     async (id: string) => {
-      await api.deleteProfile(id);
-      setProfiles((prev) => prev.filter((p) => p.id !== id));
+      try {
+        await api.deleteProfile(id);
+        setProfiles((prev) => prev.filter((p) => p.id !== id));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to delete profile");
+      }
     },
     [],
   );

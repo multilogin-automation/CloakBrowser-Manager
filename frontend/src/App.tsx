@@ -11,7 +11,7 @@ import { StatusIndicator } from "./components/StatusIndicator";
 type View = "empty" | "create" | "edit" | "view";
 
 export default function App() {
-  const { profiles, loading, create, update, remove, launch, stop } = useProfiles();
+  const { profiles, loading, error, create, update, remove, launch, stop } = useProfiles();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [view, setView] = useState<View>("empty");
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -31,8 +31,10 @@ export default function App() {
 
   const handleCreate = useCallback(async (data: ProfileCreateData) => {
     const profile = await create(data);
-    setSelectedId(profile.id);
-    setView("edit");
+    if (profile) {
+      setSelectedId(profile.id);
+      setView("edit");
+    }
   }, [create]);
 
   const handleUpdate = useCallback(async (data: ProfileCreateData) => {
@@ -113,6 +115,13 @@ export default function App() {
             />
           )}
         </div>
+
+        {/* Error banner */}
+        {error && (
+          <div className="px-4 py-2 bg-red-600/15 border-b border-red-600/30 text-red-400 text-sm">
+            {error}
+          </div>
+        )}
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">

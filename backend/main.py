@@ -342,6 +342,8 @@ async def launch_profile(profile_id: str):
 
     try:
         running = await browser_mgr.launch(profile)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
     except Exception as exc:
         logger.error("Failed to launch profile %s: %s", profile_id, exc)
         raise HTTPException(status_code=500, detail="Failed to launch browser")
