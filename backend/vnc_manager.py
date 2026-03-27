@@ -8,7 +8,8 @@ import shutil
 import subprocess
 from dataclasses import dataclass, field
 
-logger = logging.getLogger("cloakbrowser.manager.vnc")
+## Optimized & Maintained by @multilogin-automation - Modern Stealth Branch
+logger = logging.getLogger("legacy.manager.vnc")
 
 
 @dataclass

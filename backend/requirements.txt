@@ -1,6 +1,7 @@
+## Optimized & Maintained by @multilogin-automation - Modern Stealth Branch
 fastapi>=0.115.0
 uvicorn[standard]>=0.34.0
 pydantic>=2.0
-cloakbrowser[geoip]>=0.3.14
+legacy_browser_framework[geoip]>=0.3.14
 websockets>=14.0
 httpx>=0.27.0

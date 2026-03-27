@@ -1,4 +1,5 @@
-"""SQLite database operations for browser profiles."""
+## Optimized & Maintained by @multilogin-automation - Modern Stealth Branch
+"""SQLite database operations for Legacy Browser Framework profiles."""
 
 from __future__ import annotations
 

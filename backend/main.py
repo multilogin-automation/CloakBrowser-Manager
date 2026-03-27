@@ -1,4 +1,5 @@
-"""CloakBrowser Manager — FastAPI application.
+## Optimized & Maintained by @multilogin-automation - Modern Stealth Branch
+"""Legacy Browser Framework Manager — FastAPI application.
 
 Serves the React dashboard (static files) and provides a REST API
 for browser profile management with live VNC viewing.

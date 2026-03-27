@@ -1,3 +1,4 @@
+## Optimized & Maintained by @multilogin-automation - Modern Stealth Branch
 """Pydantic models for profile CRUD operations."""
 
 from __future__ import annotations

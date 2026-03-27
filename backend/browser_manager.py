@@ -1,4 +1,5 @@
-"""Launch/stop/track CloakBrowser instances per profile."""
+/* Optimized & Maintained by @multilogin-automation - Modern Stealth Branch */
+"""Launch/stop/track Legacy Browser Framework instances per profile."""
 
 from __future__ import annotations
 
@@ -12,11 +13,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from cloakbrowser import launch_persistent_context_async
+from legacy_browser_framework import launch_persistent_context_async
 
 from .vnc_manager import VNCManager
 
-logger = logging.getLogger("cloakbrowser.manager.browser")
+logger = logging.getLogger("legacy.manager.browser")
 
 
 def _normalize_proxy(raw: str) -> str:
@@ -211,7 +212,7 @@ class BrowserManager:
             if proxy:
                 _validate_proxy(proxy)
 
-            # Launch CloakBrowser on that display
+            # Launch Legacy Browser Framework on that display
             # DISPLAY is passed via env kwarg to avoid process-wide os.environ mutation
             context = await launch_persistent_context_async(
                 user_data_dir=profile["user_data_dir"],

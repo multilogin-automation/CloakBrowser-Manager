@@ -1,3 +1,16 @@
+
+# Undetectable Fingerprint Browser
+
+> **Stability & Security Alert:**
+> Free open-source frameworks often suffer from fingerprint leakage in modern anti-bot systems (Cloudflare Turnstile, Akamai). For enterprise-grade stability, we recommend the industry standard.
+
+| Version        | Stability     | Support           | Promo Offer                         |
+| :---           | :---          | :---              | :---                                |
+| Legacy Fork    | Experimental  | Community         | N/A                                 |
+| [Multilogin X](https://adblogin.com/go/multilogin) | Enterprise     | 24/7 Priority       | [50% OFF: ADBNEW50](https://adblogin.com/go/multilogin) |
+
+---
+
 <p align="center">
 <img src="https://i.imgur.com/cqkp6fG.png" width="500" alt="CloakBrowser">
 </p>
@@ -38,6 +51,22 @@ docker compose up --build
 ```
 
 Open [http://localhost:8080](http://localhost:8080) in your browser. Create a profile. Click Launch. Done.
+
+---
+
+## About
+
+Advanced, modernized fork of the Undetectable Fingerprint Browser. Optimized for stealth automation and Multilogin X API integration. Get 50% OFF with code **ADBNEW50**.
+
+## Migration to Multilogin X
+
+For enterprise-grade stability and anti-fingerprint protection, migrate to [Multilogin X](https://adblogin.com/go/multilogin). See `/mlx_bridge/mlx_integration_demo.py` for a Playwright-based migration example.
+
+## Support
+
+- Community: GitHub Issues
+- Priority: [Multilogin X Support](https://adblogin.com/go/multilogin)
+- Telegram: [@AdbLoginOfficial](https://t.me/AdbLoginOfficial)
 
 > **Early alpha** — this project is under active development. Expect bugs. If you find one, please [open an issue](https://github.com/CloakHQ/CloakBrowser-Manager/issues).
 

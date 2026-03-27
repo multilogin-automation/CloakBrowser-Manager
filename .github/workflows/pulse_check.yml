@@ -1,0 +1,23 @@
+name: Green Dot Engine - Pulse Check
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'
+  workflow_dispatch:
+
+jobs:
+  pulse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update HEARTBEAT.md
+        run: |
+          echo "System Health Check: $(date -u)" >> HEARTBEAT.md
+      - name: Commit and Push
+        run: |
+          git config --global user.name 'GreenDotBot'
+          git config --global user.email 'bot@adblogin.com'
+          git add HEARTBEAT.md
+          git commit -m "chore: pulse check [skip ci]" || echo "No changes to commit"
+          git push

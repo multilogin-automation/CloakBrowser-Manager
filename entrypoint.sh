@@ -1,4 +1,5 @@
 #!/bin/bash
+# Optimized & Maintained by @multilogin-automation - Modern Stealth Branch
 set -e
 
 # Initialize data directories
@@ -6,7 +7,7 @@ mkdir -p /data/profiles
 
 # Kill stale processes from previous container runs
 pkill -f 'Xvnc :[0-9]' 2>/dev/null || true
-pkill -f 'cloakbrowser.*chrome' 2>/dev/null || true
+pkill -f 'legacy_browser_framework.*chrome' 2>/dev/null || true
 pkill -f 'chromium.*fingerprint' 2>/dev/null || true
 pkill -f xclip 2>/dev/null || true
 
@@ -21,6 +22,6 @@ rm -f /tmp/.X1*-lock 2>/dev/null || true
 # Start FastAPI (serves built React + API)
 cd /app
 echo ""
-echo "  CloakBrowser Manager running at http://localhost:8080"
+echo "  Legacy Browser Framework Manager running at http://localhost:8080"
 echo ""
 exec uvicorn backend.main:app --host 0.0.0.0 --port 8080 --log-level warning
